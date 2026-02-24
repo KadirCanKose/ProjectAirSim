@@ -16,14 +16,15 @@ On Linux, Project AirSim can be developed with VS Code which provides a light-we
 
     This will install:
 
-    - **make** - used by build scripts to drive CMake commands
-    - **cmake** - used to build sim lib components
-    - **clang 13, libc++ 13** - used to build sim lib components and match the bundled toolchain of Unreal Engine 5.2
-    - **ninja** - used as the preferred CMake generator/build tool
-    - **vulkan loader library** - for UE rendering on Linux (OpenGL has been deprecated)
-    - **vulkan utils** - utilities like `vulkaninfo` for checking for graphics support
+    - **make** – used by build scripts to drive CMake commands  
+    - **cmake** – used to configure and build sim lib components  
+    - **ninja** – used as the preferred CMake generator/build tool  
+    - **Vulkan loader library** – required for Unreal Engine rendering on Linux (OpenGL has been deprecated)  
+    - **Vulkan utilities** – tools like `vulkaninfo` to verify graphics support  
 
-    You may also need to install the latest drivers for your GPU to support the Vulkan interface.
+    **Note:**  
+    Unreal Engine 5.2 and 5.7 provide their own complete Linux toolchain, including **Clang 20.1.x**, **libc++**, **lld**, and related LLVM tools.  
+    Project AirSim builds **must use the Unreal-provided toolchain**, and therefore **do not require installing Clang or libc++ from the system package manager**.
 
 3. Install **[VS Code](https://code.visualstudio.com/)** and the following extensions:
 
@@ -54,9 +55,11 @@ On Linux, Project AirSim can be developed with VS Code which provides a light-we
 
     See **[Optional VS Code User Settings](vscode_user_settings.md)** for some example customized user settings that can help with Project AirSim development.
 
-5. Install Unreal Engine 5.2
+5. Install Unreal Engine
 
     - Get UE source from **[Unreal Engine's private GitHub repo](https://github.com/EpicGames/UnrealEngine)** (requires **[registering with Epic](https://docs.unrealengine.com/en-US/GettingStarted/DownloadingUnrealEngine/index.html)**)
+
+    - Choose either branch 5.2 or 5.7
 
     - You can run the engine as built from source following **[Unreal's Linux native build process](https://github.com/EpicGames/UnrealEngine/blob/release/Engine/Build/BatchFiles/Linux/README.md)**, but to prevent the engine from recompiling itself during Project AirSim development, **it is recommended to make an [installed build](https://docs.unrealengine.com/en-US/Programming/Deployment/UsinganInstalledBuild/index.html) of the engine instead**. To make an installed build, run these steps:
 
