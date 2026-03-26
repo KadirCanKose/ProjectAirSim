@@ -724,7 +724,7 @@ void Robot::Impl::RegisterServiceMethods() {
       get_camera_ray.CreateMethodHandler(&Robot::Impl::GetCameraRay, *this);
   service_manager_.RegisterMethod(get_camera_ray, get_camera_ray_handler);
 
-  auto get_rotor_info = ServiceMethod(topic_path_ + "/rotor_info", {""});
+  auto get_rotor_info = ServiceMethod(topic_path_ + "/RotorInfo", {""});
   auto get_rotor_info_handler =
       get_rotor_info.CreateMethodHandler(&Robot::Impl::GetRotorInfo, *this);
   service_manager_.RegisterMethod(get_rotor_info, get_rotor_info_handler);
