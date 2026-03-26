@@ -99,6 +99,8 @@ class Robot::Impl : public ActorImpl {
 
   KinematicsMessage GetGroundTruthKinematics();
 
+  RotorMessage GetRotorInfo();
+
   bool SetGroundTruthKinematics(const KinematicsMessage& kinematics);
 
   void SetController(std::unique_ptr<IController> controller);
@@ -206,6 +208,7 @@ class Robot::Impl : public ActorImpl {
   Topic desired_robot_pose_topic_;
   Topic collision_info_topic_;
   Topic rotor_info_topic_;
+  std::vector<RotorInfo> last_rotor_info_vec_;
   std::vector<std::reference_wrapper<Topic>> topics_;
 
   KinematicsCallback callback_kinematics_updated_;
@@ -720,6 +723,11 @@ void Robot::Impl::RegisterServiceMethods() {
   auto get_camera_ray_handler =
       get_camera_ray.CreateMethodHandler(&Robot::Impl::GetCameraRay, *this);
   service_manager_.RegisterMethod(get_camera_ray, get_camera_ray_handler);
+
+  auto get_rotor_info = ServiceMethod(topic_path_ + "/rotor_info", {""});
+  auto get_rotor_info_handler =
+      get_rotor_info.CreateMethodHandler(&Robot::Impl::GetRotorInfo, *this);
+  service_manager_.RegisterMethod(get_rotor_info, get_rotor_info_handler);
 }
 
 bool Robot::Impl::SetExternalForce(const std::vector<float>& ext_force) {
@@ -730,6 +738,11 @@ bool Robot::Impl::SetExternalForce(const std::vector<float>& ext_force) {
 KinematicsMessage Robot::Impl::GetGroundTruthKinematics() {
   KinematicsMessage kin_msg(SimClock::Get()->NowSimNanos(), kinematics_);
   return kin_msg;
+}
+
+RotorMessage Robot::Impl::GetRotorInfo() {
+  RotorMessage rotor_msg(SimClock::Get()->NowSimNanos(), last_rotor_info_vec_);
+  return rotor_msg;
 }
 
 bool Robot::Impl::SetGroundTruthKinematics(
@@ -1143,8 +1156,9 @@ void Robot::Impl::UpdateActuators(const TimeNano sim_time,
       }
     }
   }
-  // Publish rotor topic
+  // Cache and publish rotor topic
   if (!rotor_info_vec.empty()) {
+    last_rotor_info_vec_ = rotor_info_vec;
     auto rotor_info =
         RotorMessage(SimClock::Get()->NowSimNanos(), rotor_info_vec);
     topic_manager_.PublishTopic(rotor_info_topic_, rotor_info);
